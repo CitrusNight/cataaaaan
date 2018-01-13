@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>chat app node.js</title>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="//code.jquery.com/jquery-1.11.1.js"></script>
+  <style>
+  * {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+  }
+  body {
+    font-family: Verdana;
+  }
+  ul {
+    list-style-type: none;
+    padding: 20px;
+    background: #000;
+    color: white;
+  }
+  #controls {
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    padding: 20px;
+    display: block;
+    width: 100%;
+  }
+  #controls #msj {
+    float: left;
+    width: 80%;
+    display: block;
+    padding: 20px;
+  }
+  #controls #btn {
+    float: right;
+    padding: 20px;
+  }
+  </style>
+</head>
+<body>
+  <script>
+//　　<!-- 通信用 -->
+    var socket = io();
+
+ //   <!-- jQueryの処理 -->
+    $(function() {
+//　　<!-- サブミットボタンを押された処理 -->
+      $('form').submit(function() {
+//　　　<!-- 入力フォームには入っている値を取得 -->
+        var mensaje = $('#msj').val();
+　　　　　　　　　　　　　　　　
+//　　　　<!-- 値がなかったら終了 -->
+        if (mensaje === '') return false;
+
+//　　　<!-- 全体にmessage処理（サーバーサイドにメッセージを渡す） -->
+        socket.emit('message', mensaje);
+
+//　　　　<!-- 入力フォームを空にしてフォーカスする -->
+        $('#msj').val('').focus();
+//　　　　　　　　　　　　　　　　<!-- 処理終了 -->
+        return false;
+    });
+   });
+
+//　　<!-- サーバーサイドから来たメッセージを挿入 -->
+    socket.on('message', function(msj, id) {
+      $('#message').append($('<li>').text(id + " : " + msj));
+    });
+  </script>
+  <ul id="message">
+
+  </ul>
+  <div id="controls">
+    <form action="">
+    <input type="text" id="msj" placeholder="Escribe tu mensaje...">
+    <input type="submit" id="btn" value="Enviar">
+    </form>
+ </div>
+</body>
+</html>
